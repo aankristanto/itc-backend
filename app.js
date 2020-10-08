@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const { rootCertificates } = require('tls');
+const { stat } = require('fs');
 
 const app = express();
 
@@ -36,7 +37,8 @@ app.get('/', (req, res) => {
     res.send("Backend Server For ITC APP");
 });
 
-// API - pilihan alamat prov, kabkota, kec 
+
+// API GET
 app.get('/api/prov', (req, res) => {
     koneksi.query('SELECT * FROM prov', (err, hasil)=> {
         if(err) throw err;
@@ -58,8 +60,6 @@ app.get('/api/kec', (req, res) => {
     })
 });
 
-
-// API - cp
 app.get('/api/cp/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -69,7 +69,6 @@ app.get('/api/cp/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
-
 
 app.get('/api/customer/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -81,14 +80,12 @@ app.get('/api/customer/page/:pagenumber', (req, res) => {
     });
 });
 
-
 app.get('/api/deal', (req, res) => {
     koneksi.query('SELECT * FROM deal', (err, hasil)=> {
         if(err) throw err;
         res.json(hasil);
     });
 });
-
 
 app.get('/api/finish/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -100,7 +97,6 @@ app.get('/api/finish/page/:pagenumber', (req, res) => {
     })
 });
 
-
 app.get('/api/ijin/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -110,7 +106,6 @@ app.get('/api/ijin/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
-
 
 app.get('/api/kunjungan/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -122,7 +117,6 @@ app.get('/api/kunjungan/page/:pagenumber', (req, res) => {
     })
 });
 
-
 app.get('/api/marketting/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -133,8 +127,6 @@ app.get('/api/marketting/page/:pagenumber', (req, res) => {
     })
 });
 
-
-// api omzet
 app.get('/api/omzet/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -143,6 +135,50 @@ app.get('/api/omzet/page/:pagenumber', (req, res) => {
         if(err) throw err;
         res.json(hasil);
     })
+});
+
+app.get('/api/planning/page/:pagenumber', (req, res) => {
+    var pagenumber = req.params.pagenumber;
+    var pageend = 25 * pagenumber;
+    var pagestart = pageend - 25;
+    koneksi.query('SELECT * FROM planning LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
+        if(err) throw err;
+        res.json(hasil);
+    })
+});
+
+app.get('/api/team/page/:pagenumber', (req, res) => {
+    var pagenumber = req.params.pagenumber;
+    var pageend = 25 * pagenumber;
+    var pagestart = pageend - 25;
+    koneksi.query('SELECT * FROM team LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
+        if(err) throw err;
+        res.json(hasil);
+    })
+});
+
+app.get('/api/user/page/:pagenumber', (req, res) => {
+    var pagenumber = req.params.pagenumber;
+    var pageend = 25 * pagenumber;
+    var pagestart = pageend - 25;
+    koneksi.query('SELECT * FROM user LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
+        if(err) throw err;
+        res.json(hasil);
+    })
+});
+
+
+// API POST
+app.post('/api/planning/add', (req, res) => {
+    var id_marketting = req.body.id_marketting;
+    var id_customer = req.body.id_customer;
+    var tgl = req.body.tgl;
+    var bertemu = req.body.bertemu;
+    var ket = req.body.ket;
+    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil) => {
+        if(err) throw err;
+        res.send("Add data success");
+    }
 });
 
 app.post('/api/omzet/add', (req, res) => {
@@ -155,55 +191,32 @@ app.post('/api/omzet/add', (req, res) => {
         res.send("Add data success");
     })
 });
-// api omzet
 
-
-
-// api planning
-app.get('/api/planning/page/:pagenumber', (req, res) => {
-    var pagenumber = req.params.pagenumber;
-    var pageend = 25 * pagenumber;
-    var pagestart = pageend - 25;
-    koneksi.query('SELECT * FROM planning LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
+app.post('/api/marketting/add', (req, res) => {
+    var m_username = req.body.username;
+    var m_password = req.body.password;
+    var nama = req.body.nama;
+    var alamat = req.body.alamat;
+    var nohp = req.body.nohp;
+    var fotopp = req.body.fotopp;
+    var target = req.body.target;
+    var mstatus = req.body.status;
+    koneksi.query('INSERT INTO user(user, password) VALUES(?, ?)'), [m_username, m_password], (err, hasil) => {
         if(err) throw err;
-        res.json(hasil);
-    })
+        res.send("Add data successfull");
+    };
 });
+
 app.post('/api/planning/add', (req, res) => {
     var id_marketting = req.body.id_marketting;
     var id_customer = req.body.id_customer;
     var tgl = req.body.tgl;
     var bertemu = req.body.bertemu;
     var ket = req.body.ket;
-    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil) => {
+    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil){
         if(err) throw err;
-        res.send("Add data success");
+        res.send("add data success")
     }
 });
-//
-
-
-// api team
-app.get('/api/team/page/:pagenumber', (req, res) => {
-    var pagenumber = req.params.pagenumber;
-    var pageend = 25 * pagenumber;
-    var pagestart = pageend - 25;
-    koneksi.query('SELECT * FROM team LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
-        if(err) throw err;
-        res.json(hasil);
-    })
-});
-
-
-app.get('/api/user/page/:pagenumber', (req, res) => {
-    var pagenumber = req.params.pagenumber;
-    var pageend = 25 * pagenumber;
-    var pagestart = pageend - 25;
-    koneksi.query('SELECT * FROM user LIMIT ?, ?', [pagestart, 25], (err, hasil)=> {
-        if(err) throw err;
-        res.json(hasil);
-    })
-});
-
 
 app.listen(3000, () => console.log(`App running on port 3000`));
