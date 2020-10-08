@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const { rootCertificates } = require('tls');
 const { stat } = require('fs');
+const { time } = require('console');
 
 const app = express();
 
@@ -216,6 +217,35 @@ app.post('/api/planning/add', (req, res) => {
     koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil) => {
         if(err) throw err;
         res.send("add data success")
+    }
+});
+
+app.post('/api/reports/nonplan/add', (req, res) => {
+    var id_marketting = req.body.id_marketting;
+    var id_plan = 0;
+    var id_customer = req.body.id_customer;
+    var tgl_kunjungan = req.body.tgl_kunjungan;
+    var info_dpt = req.body.info_dpt;
+    var action = req.body.action;
+    var tujuan = req.body.tujuan;
+    var cp = req.body.cp;
+    var peluang = req.body.peluang;
+    var visit = req.body.visit;
+    var n_visit = req.body.n_visit;
+    var deal = req.body.deal;
+    var pembayaran = req.body.pembayaran;
+    var waktu_pengadaan = req.body.waktu_pengadaan;
+    var tgl_deal = req.body.tgl_deal;
+    var foto = req.body.foto;
+    var timestamp = req.body.timestamp;
+    var lokasi_lat = req.body.lokasi_lat;
+    var lokasi_lon = req.body.lokasi_lon;
+    var service_tt = req.body.service_tt;
+    koneksi.query('INSERT INTO kunjungan(id_marketting, id_plan, id_customer, tgl_kunjungan, info_dpt, action, cp, peluang, visit, n_visit, deal, pembayaran, waktu_pengadaan, tgl_deal, foto, timestamp, lokasi_lat, lokasi_lon, service_tt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'), [
+        id_marketting, id_plan, id_customer, tgl_kunjungan, info_dpt, action, tujuan, cp, peluang, visit, n_visit, deal, pembayaran, waktu_pengadaan, tgl_deal, foto, timestamp, lokasi_lat, lokasi_lon, service_tt
+    ], (err,hasil) => {
+        if(err) throw err;
+        res.send("add data successfull");
     }
 });
 
