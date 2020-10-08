@@ -36,6 +36,7 @@ app.get('/', (req, res) => {
     res.send("Backend Server For ITC APP");
 });
 
+// API - pilihan alamat prov, kabkota, kec 
 app.get('/api/prov', (req, res) => {
     koneksi.query('SELECT * FROM prov', (err, hasil)=> {
         if(err) throw err;
@@ -57,6 +58,8 @@ app.get('/api/kec', (req, res) => {
     })
 });
 
+
+// API - cp
 app.get('/api/cp/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -66,6 +69,7 @@ app.get('/api/cp/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
+
 
 app.get('/api/customer/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -77,12 +81,14 @@ app.get('/api/customer/page/:pagenumber', (req, res) => {
     });
 });
 
+
 app.get('/api/deal', (req, res) => {
     koneksi.query('SELECT * FROM deal', (err, hasil)=> {
         if(err) throw err;
         res.json(hasil);
     });
 });
+
 
 app.get('/api/finish/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -94,6 +100,7 @@ app.get('/api/finish/page/:pagenumber', (req, res) => {
     })
 });
 
+
 app.get('/api/ijin/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -103,6 +110,7 @@ app.get('/api/ijin/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
+
 
 app.get('/api/kunjungan/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
@@ -114,6 +122,7 @@ app.get('/api/kunjungan/page/:pagenumber', (req, res) => {
     })
 });
 
+
 app.get('/api/marketting/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -124,6 +133,8 @@ app.get('/api/marketting/page/:pagenumber', (req, res) => {
     })
 });
 
+
+// api omzet
 app.get('/api/omzet/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -134,6 +145,21 @@ app.get('/api/omzet/page/:pagenumber', (req, res) => {
     })
 });
 
+app.post('/api/omzet/add', (req, res) => {
+    var id_marketting = req.body.id_marketting;
+    var tgl = req.body.tgl;
+    var omzet = req.body.omzet;
+    var nm_customer = req.body.nm_customer;
+    koneksi.query('INSERT INTO omzet(id_marketting, tgl, omzet, nm_customer) VALUES(?, ?, ?, ?)', [id_marketting, tgl, omzet, nm_customer], (err, hasil)=> {
+        if(err) throw err;
+        res.send("Add data success");
+    })
+});
+// api omzet
+
+
+
+// api planning
 app.get('/api/planning/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -143,7 +169,21 @@ app.get('/api/planning/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
+app.post('/api/planning/add', (req, res) => {
+    var id_marketting = req.body.id_marketting;
+    var id_customer = req.body.id_customer;
+    var tgl = req.body.tgl;
+    var bertemu = req.body.bertemu;
+    var ket = req.body.ket;
+    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil) => {
+        if(err) throw err;
+        res.send("Add data success");
+    }
+});
+//
 
+
+// api team
 app.get('/api/team/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
     var pageend = 25 * pagenumber;
@@ -153,6 +193,7 @@ app.get('/api/team/page/:pagenumber', (req, res) => {
         res.json(hasil);
     })
 });
+
 
 app.get('/api/user/page/:pagenumber', (req, res) => {
     var pagenumber = req.params.pagenumber;
