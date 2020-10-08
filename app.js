@@ -213,7 +213,7 @@ app.post('/api/planning/add', (req, res) => {
     var tgl = req.body.tgl;
     var bertemu = req.body.bertemu;
     var ket = req.body.ket;
-    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil){
+    koneksi.query('INSERT INTO planning(id_marketting, id_customer, tgl, bertemu, ket) VALUES(?, ?, ?, ?, ?)'), [id_marketting, id_customer, tgl, bertemu, ket], (err, hasil) => {
         if(err) throw err;
         res.send("add data success")
     }
